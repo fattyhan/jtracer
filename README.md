@@ -1,26 +1,27 @@
-# jtracer
+## jtracer
 java代码执行跟踪器
-###jtracer是用于程序调用链监控的，其具备以下功能
-1、可对所在运行系统内的方法调用进行监控，其原理是获取当前线程的线程栈，跟踪信息如下：
+## jtracer是用于程序调用链监控的，其具备以下功能
+* 1、可对所在运行系统内的方法调用进行监控，其原理是获取当前线程的线程栈，跟踪信息如下：
 
-+--com.intellij.rt.execution.application.AppMain.main[name=main
-+---java.lang.reflect.Method.invoke[name=main
-+----sun.reflect.DelegatingMethodAccessorImpl.invoke[name=main
-+-----sun.reflect.NativeMethodAccessorImpl.invoke[name=main
-+------sun.reflect.NativeMethodAccessorImpl.invoke0[name=main
-+-------com.jdjr.lambda.TraceTest.main[name=main
-+--------com.jdjr.lambda.TraceTest.say[name=main
-+---------java.lang.Thread.getStackTrace[name=main
+>+--com.intellij.rt.execution.application.AppMain.main[name=main
+>>+---java.lang.reflect.Method.invoke[name=main
+>>>+----sun.reflect.DelegatingMethodAccessorImpl.invoke[name=main
+>>>>+-----sun.reflect.NativeMethodAccessorImpl.invoke[name=main
+>>>>>+------sun.reflect.NativeMethodAccessorImpl.invoke0[name=main
+>>>>>>+-------com.jdjr.lambda.TraceTest.main[name=main
+>>>>>>>+--------com.jdjr.lambda.TraceTest.say[name=main
+>>>>>>>>+---------java.lang.Thread.getStackTrace[name=main
 
-2、可进行跨进程跟踪，即RPC调用跟踪。使用时需约定调用链各个相关系统的RPC区间极其区间内各节点分布，然后在需跟踪的方法上添加如下注解
-@Trace(appName = "lambda",keyword = "businessNo",invokeType = InvokeType.RPC,segmentId = Segment.ONE)
-该注解包含如下项：
-    appName：所在应用的名称
-    keyword：关键字，即贯穿调用链的唯一标识，若不声明则根据方法参数进行生成，此时需要保证参数一致
-    invokeType：调用类型NATIVE|RPC|RPC_END，RPC类型的方法第一次执行时会生成PRCUuid是整个跟踪记录的主线。在RPC区间的最后一个节点需声明为RPC_END
-    traceId：由插件分配，每个PRC区间只在该区间首个RPC类型方法执行时分配RPCUuid，与上游一致。区间内的方法监控用traceID保持一致。该注解值不要求用户声明
-    segmentId：由用户声明，在整个调用链所处的节点是几就写几
-监控示例如下：
+* 2、可进行跨进程跟踪，即RPC调用跟踪。使用时需约定调用链各个相关系统的RPC区间极其区间内各节点分布，然后在需跟踪的方法上添加如下注解<br>
+@Trace(appName = "lambda",keyword = "businessNo",invokeType = InvokeType.RPC,segmentId = Segment.ONE)<br>
+`该注解包含如下项：`<br>
+* appName：所在应用的名称<br>
+* keyword：关键字，即贯穿调用链的唯一标识，若不声明则根据方法参数进行生成，此时需要保证参数一致<br>
+* invokeType：调用类型NATIVE|RPC|RPC_END，RPC类型的方法第一次执行时会生成PRCUuid是整个跟踪记录的主线。在RPC区间的最后一个节点需声明为RPC_END<br>
+* traceId：由插件分配，每个PRC区间只在该区间首个RPC类型方法执行时分配RPCUuid，与上游一致。区间内的方法监控用traceID保持一致。该注解值不要求用户声明<br>
+* segmentId：由用户声明，在整个调用链所处的节点是几就写几<br>
+`监控示例如下：`
+```Java
 [{
 	"elapsedTime": "162",
 	"id": "CA4D3DE839656E41A521D4E47AA5181E",
@@ -42,7 +43,9 @@ java代码执行跟踪器
 	"targetReturn": "true",
 	"traceId": "258576399532675072"
 }]
-跨进程监控示例：
+```
+`跨进程监控示例：`
+```Java
 [{
 	"elapsedTime": "2905",
 	"invokeArgs": "Args:[0062002000010421, 258163693478596608, en_US, KBANK]",
@@ -84,13 +87,14 @@ java代码执行跟踪器
 	},
 	"traceId": "258163702072725504"
 }]
+```
 跨进行采集顺序：首先为本区间第一个RPC节点分配rPCUuid，在本区间最后一个节点完成时将该rPCUuid标识到本区间所有的记录中，展示时只需要根据该值进行索引并排序即可
 
-3、耗时监控：
+* 3、耗时监控：
 可监控整个调用链的每一个节点的执行耗时，为用户提供优化依据
 
-4、数据落地，该插件集成MongoDB，用户也可自定义自己的数据sink进行存储
+* 4、数据落地，该插件集成MongoDB，用户也可自定义自己的数据sink进行存储
 
-###缺陷
+`###缺陷
 1、对代码有轻度侵入
-2、对业务系统有要求（所有节点入参须有一个贯穿唯一标识）
+2、对业务系统有要求（所有节点入参须有一个贯穿唯一标识）`
