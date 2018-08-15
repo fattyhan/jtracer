@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration debug="true"
+                     xmlns:log4j='http://jakarta.apache.org/log4j/'>
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="[%t] %d{yy-MM-dd.HH:mm:ss,SSS} %-5p %l - %m%n"/>
+        </layout>
+    </appender>
+    <appender name="DETAIL" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/export/log/jtracer/detail.log" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%t] %d{yy-MM-dd.HH:mm:ss,SSS} %-5p %l - %m%n"/>
+        </layout>
+    </appender>
+    <!--<appender name="ERROR-APPENDER" class="org.apache.log4j.DailyRollingFileAppender">-->
+        <!--<param name="File" value="/export/log/lambda/error.log" />-->
+        <!--<param name="DatePattern" value="'.'yyyy-MM-dd" />-->
+        <!--<layout class="org.apache.log4j.PatternLayout">-->
+            <!--<param name="ConversionPattern" value="[%t] %d{yy-MM-dd.HH:mm:ss,SSS} %-5p %l - %m%n"/>-->
+        <!--</layout>-->
+    <!--</appender>-->
+    <logger name="org.apache.log4j.Logger.TracerLogger"  additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="DETAIL" />
+    </logger>
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="DETAIL" />
+        <appender-ref ref="CONSOLE" />
+        <!--<appender-ref ref="ERROR-APPENDER" />-->
+    </root>
+</log4j:configuration>
